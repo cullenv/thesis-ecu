@@ -20,7 +20,7 @@ This document defines the strict, testable software and hardware requirements fo
 | **REQ-002** | The scheduler shall execute the CAN Transmit Task every 10 ms (± 1 ms). | Scheduler | UT | ⬜ Not Started |
 | **REQ-003** | The scheduler shall execute the Diagnostic Monitor Task every 100 ms (± 5 ms). | Scheduler | UT | ⬜ Not Started |
 
-<sub><center>Why did I pick these requirements: I wanted to learn on why it was important and the standard to have the motor control task polling faster than the diagnostic task. Understanding how to why saving CPU cycles whenever possible</center></sub>
+<center><sub>Why did I pick these requirements: I wanted to learn on why it was important and the standard to have the motor control task polling faster than the diagnostic task. Understanding how to why saving CPU cycles whenever possible</sub></center>
 
 ## 2. Hardware Interfaces (HAL & MCAL)
 | ID | Description | Component | Verification | Status |
@@ -29,7 +29,7 @@ This document defines the strict, testable software and hardware requirements fo
 | **REQ-005** | The ECU shall limit the maximum commanded PWM duty cycle to 95% to protect the motor driver hardware. | HAL | UT | ⬜ Not Started |
 | **REQ-006** | The ECU shall read the hardware quadrature encoder to calculate the motor speed in RPM every 1 ms. | HAL | HIL | ⬜ Not Started |
 
-<sub><center>Why: Learning more about PWN, higher duty cycles for our PWM will allow our motor to run faster, but there is a limit and typically should not exceed 95%. If we were at 100% our bootstrap capacitor on our PWM module would overheat and blow up.</center></sub>
+<center><sub>Generating a ramp is essential for DC motors as it acts as a short circuit at 0 RPM so if you were commanding 0 to 5000 RPM you would have an in-rush of current, which has a multitude of differing problems.</sub></center>
 
 ## 3. Control Logic (Application Layer)
 | ID | Description | Component | Verification | Status |
@@ -38,7 +38,7 @@ This document defines the strict, testable software and hardware requirements fo
 | **REQ-008** | The ECU shall limit the rate of change of the Target Speed to a maximum of 1000 RPM per second. | App/PI | UT | ⬜ Not Started |
 | **REQ-009** | If the PI controller output exceeds 95% duty cycle, the ECU shall freeze the integral accumulator. | App/PI | UT | ⬜ Not Started |
 
-<sub><center>Generating a ramp is essential for DC motors at acts as a short circuit at 0 RPM so if you were commanding 0 to 5000 RPM you would have a in-rush of current, which has a multitude of differing problems</center></sub>
+<center><sub>Why: Learning more about PWM, higher duty cycles for our PWM will allow our motor to run faster, but there is a limit and typically should not exceed 95%. If we were at 100% our bootstrap capacitor on our PWM module would overheat and blow up.</sub></center>
 
 ## 4. CAN Communications
 | ID | Description | Component | Verification | Status |
