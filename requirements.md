@@ -20,12 +20,16 @@ This document defines the strict, testable software and hardware requirements fo
 | **REQ-002** | The scheduler shall execute the CAN Transmit Task every 10 ms (± 1 ms). | Scheduler | UT | ⬜ Not Started |
 | **REQ-003** | The scheduler shall execute the Diagnostic Monitor Task every 100 ms (± 5 ms). | Scheduler | UT | ⬜ Not Started |
 
+<sub>Why did I pick these requirements: I wanted to learn on why it was important and the standard to have the motor control task polling faster than the diagnostic task. Understanding how to why saving CPU cycles whenever possible </sub>
+
 ## 2. Hardware Interfaces (HAL & MCAL)
 | ID | Description | Component | Verification | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **REQ-004** | The ECU shall command a 0% PWM duty cycle to the motor driver upon system initialization. | HAL | HIL | ⬜ Not Started |
 | **REQ-005** | The ECU shall limit the maximum commanded PWM duty cycle to 95% to protect the motor driver hardware. | HAL | UT | ⬜ Not Started |
 | **REQ-006** | The ECU shall read the hardware quadrature encoder to calculate the motor speed in RPM every 1 ms. | HAL | HIL | ⬜ Not Started |
+
+<sub>Why: Learning more about PWN, higher duty cycles for our PWM will allow our motor to run faster, but there is a limit and typically should not exceed 95%. If we were at 100% our bootstrap capacitor on our PWM module would overheat and blow up. </sub>
 
 ## 3. Control Logic (Application Layer)
 | ID | Description | Component | Verification | Status |
