@@ -60,3 +60,31 @@
 - **Next Action:** Draft out the next 15 requirements looking for 30 test in total
 
 ---
+
+## [2026-08-19] - ["Last 15 Requirements"]
+
+### 🎯 Objective
+
+- [ ] Draft up requirements 16-30 Ensure that these are objective and testable
+
+### 🧠 Decisions & Discoveries
+
+- **Discovery:** Learned about the concept of cosmic rays and how it could happen to a vehicles ECU and the importance of safe guarding it
+- **Concept:** If a cosmic ray flips a bit in a vehicle's ECU, it can   malfunction like unintended acceleration or sudden engine stalls while driving. Factoring in error states ensures the computer instantly detects these random glitches and safely shifts the car into a backup "limp mode" rather than crashing the system entirely.
+
+- **Discovery:** UDS and its importance
+- **Concept:** OBD2 ports use the UDS langugae to pull and understand the stored fault codes in the NVM portion.
+- **Why this matters:** Having a clean UDS report is essential for the lifecycle of you vehicles as a car going to the mechanic is a unavoidable situation.
+
+### 🐛 Bug Tracker / Roadblocks
+
+- **Error:**
+- **Fix:**
+
+- **Error:** 
+- **Fix:** 
+
+### 🍞 Breadcrumb for Tomorrow
+
+- **Status:** CMake files are made and ready to go.
+- **Next Action:** Draft out the next 15 requirements looking for 30 test in total
