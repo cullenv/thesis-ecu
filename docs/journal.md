@@ -78,13 +78,35 @@
 
 ### 🐛 Bug Tracker / Roadblocks
 
-- **Error:**
-- **Fix:**
-
-- **Error:** 
-- **Fix:** 
+- **Error:** N/A
+- **Fix:** N/A
 
 ### 🍞 Breadcrumb for Tomorrow
 
-- **Status:** CMake files are made and ready to go.
-- **Next Action:** Draft out the next 15 requirements looking for 30 test in total
+- **Status:** 
+- **Next Action:** Understanding CppUTest or Ceedling and its importance
+
+---
+
+## [2026-08-19] - ["Understand and Intergrate the testing framework into our"]
+
+### 🎯 Objective
+
+- [ ] Use CppUTest as our testing frame work and set it up
+
+### 🧠 Decisions & Discoveries
+
+- **Decision:** Integrated CppUTest and configured CMake to build two separate executables: `ecu_firmware` and `run_tests`. 
+- **Concept (Hardware Independence):** Professional embedded code is decoupled from the hardware. By using CppUTest, I am compiling my logic for my native x86 machine (my PC) rather than the ARM microcontroller. 
+- **Why this matters:** When I write the PI controller math later, I can verify it calculates the correct duty cycles purely in software, running tests in 0.001 seconds on my PC, without ever needing to flash the physical STM32 board. This proves my logic is flawless before hardware variables are introduced.
+
+### 🐛 Bug Tracker / Roadblocks
+
+- **Error:** Linker failed with `cannot find -lcpputest` when compiling `run_tests`.
+- **Root Cause:** GCC linker on Linux is case-sensitive. The library is installed as `libCppUTest.a`, but CMake requested `cpputest`.
+- **Fix:** Changed `target_link_libraries(run_tests cpputest)` to `target_link_libraries(run_tests CppUTest CppUTestExt)` in `CMakeLists.txt`.
+
+### 🍞 Breadcrumb for Tomorrow
+
+- **Status:** Prove the test framework catches bugs by deliberately making a test fail (Red-Green-Refactor loop).
+- **Next Action:** Change `CHECK_EQUAL(1, 1)` to `CHECK_EQUAL(1, 2)` in `tests/test_dummy.cpp`. Run `make && ./run_tests` and watch it fail. Change it back to verify the test harness is truly evaluating logic.
