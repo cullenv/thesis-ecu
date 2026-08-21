@@ -20,3 +20,6 @@ TEST(DummyGroup, MathShouldWork) {
 int main(int ac, char** av) {
     return CommandLineTestRunner::RunAllTests(ac, av);
 }
+
+// I am now seeing that this file is testing passing states and ensuring we are getting a returned "pass" from the test framework.
+// This is a dummy test to ensure that the framework is working correctly

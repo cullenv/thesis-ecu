@@ -1,0 +1,26 @@
+---
+# Enable specific diagnostic checks
+Checks: >
+  -*,
+  bugprone-*,
+  clang-analyzer-*,
+  cert-*,
+  misc-*,
+  readability-*,
+  -readability-identifier-length
+
+# Warnings should cause the build to fail in CI
+WarningsAsErrors: >
+  bugprone-*,
+  clang-analyzer-*,
+  cert-*
+
+# Configuration options for checks
+CheckOptions:
+  - key: readability-identifier-naming.VariableCase
+    value: lower_case
+  - key: readability-identifier-naming.FunctionCase
+    value: CamelCase
+  - key: readability-identifier-naming.ConstantCase
+    value: UPPER_CASE
+---

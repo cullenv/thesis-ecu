@@ -1,0 +1,28 @@
+---
+# Base style to inherit standard formatting conventions
+BasedOnStyle: LLVM
+
+# Indentation rules
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+# Language standard
+Language: Cpp
+Standard: c++11
+
+# Structural layouts
+BreakBeforeBraces: Allman
+ColumnLimit: 100
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: Never
+
+# Pointer and Reference Alignment
+PointerAlignment: Right
+
+# Spacing rules
+SpacesBeforeTrailingComments: 2
+SpaceAfterCStyleCast: true
+SpaceBeforeParens: ControlStatements
+---
