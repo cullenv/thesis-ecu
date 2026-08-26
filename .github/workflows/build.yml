@@ -1,0 +1,40 @@
+name: Embedded CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out repository code
+        uses: actions/checkout@v4
+
+    - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake clang-format clang-tidy cpputest
+
+    - name: Generate Build Files
+        run: |
+          mkdir -p build
+          cd build
+          cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+
+    - name: Static Analysis (Clang-Tidy)
+        run: |
+          clang-tidy -p build app/main.c
+
+    - name: Compile Code
+        run: |
+          cd build
+          make
+
+    - name: Run Unit Tests
+        run: |
+          cd build
+          ./run_tests
+
