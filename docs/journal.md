@@ -110,3 +110,39 @@
 
 - **Status:** Prove the test framework catches bugs by deliberately making a test fail (Red-Green-Refactor loop).
 - **Next Action:** Change `CHECK_EQUAL(1, 1)` to `CHECK_EQUAL(1, 2)` in `tests/test_dummy.cpp`. Run `make && ./run_tests` and watch it fail. Change it back to verify the test harness is truly evaluating logic.
+
+## [2026-08-22] - Saturday: Continuous Integration (The Crucible)
+
+### 🎯 Objective
+- [x] Write `.github/workflows/build.yml`.
+- [x] Provision the Ubuntu runner with GCC, CMake, CppUTest, and Clang tools.
+- [x] Establish the automated pipeline: Generate -> Lint -> Compile -> Test.
+
+### 🧠 Decisions & Discoveries
+- **Decision:** Ran native Linux GCC on the GitHub `ubuntu-latest` runner instead of `arm-none-eabi-gcc`.
+- **Why:** This achieves hardware independence. By compiling the test executable for x86, the cloud runner can execute the C logic tests natively in milliseconds to prove the math works before ARM hardware is ever involved.
+- **Decision:** Placed the Clang-Tidy step *before* the Make compilation step.
+- **Why:** "Fail fast" principle. If the static analyzer detects a MISRA violation or memory leak, the pipeline halts immediately, saving cloud compute time and preventing bad code from compiling.
+
+### 🍞 Breadcrumb for Monday (Week 2)
+- **Status:** CI pipeline is live and green. Week 1 is officially complete. 
+- **Next Action:** Begin Week 2 by integrating `gcov` and `gcovr` into `CMakeLists.txt` to measure exactly how much of our code the tests are actually checking.
+
+## [2026-08-27] - Week 2, Monday (Thursday got pretty sick) : Test Coverage Tooling
+
+### 🎯 Objective
+- [x] Inject GCC coverage tracking flags into the CMake test build.
+- [x] Generate execution data (`.gcno` and `.gcda`).
+- [x] Use `gcovr` to generate a local HTML coverage dashboard.
+
+### 🧠 Decisions & Discoveries
+- **Decision:** Applied `--coverage` strictly to the `run_tests` executable, NOT `ecu_firmware`.
+- **Why:** The test executable runs on a PC with a file system, allowing GCC to dump `.gcda` execution logs to the hard drive. If deployed to the bare-metal STM32, it would consume precious RAM and have nowhere to save the files.
+- **Discovery:** `gcovr` reports 0% coverage because the dummy test (`1 == 1`) does not invoke any application logic. Coverage metrics prove not just that tests pass, but that they actively stimulate the production code paths.
+
+- **Industry Standard (ISO 26262 ASIL-D):** In automotive safety-critical systems, it is a legal requirement to prove that 100% of the logic was executed by a test. We use GCC's built-in `gcov` tool to mathematically prove this execution.
+- **Hardware Constraint:** We strictly apply `--coverage` tracking *only* to the `run_tests` executable running on the PC. We absolutely do not want coverage tracking in our `ecu_firmware` build because the hidden integer counters consume precious RAM and CPU cycles on the physical microcontroller.
+
+### 🍞 Breadcrumb for Tuesday
+- **Status:** Local coverage dashboard generation is working. 
+- **Next Action:** Enforce coverage rules in the cloud by modifying the GitHub Actions CI pipeline to fail if coverage drops below 90%.
