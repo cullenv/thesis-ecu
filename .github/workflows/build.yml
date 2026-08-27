@@ -16,7 +16,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential cmake clang-format clang-tidy cpputest
+          sudo apt-get install -y build-essential cmake clang-format clang-tidy cpputest gcovr
 
       - name: Generate Build Files
         run: |
@@ -37,3 +37,8 @@ jobs:
         run: |
           cd build
           ./run_tests
+
+      - name: Enforce Code Coverage With gcovr
+        run: |
+          cd build
+          gcovr -r .. . --exclude ".*/tests/.*" --txt --fail-under-line 90
