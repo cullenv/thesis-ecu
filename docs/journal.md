@@ -146,3 +146,15 @@
 ### 🍞 Breadcrumb for Tuesday
 - **Status:** Local coverage dashboard generation is working. 
 - **Next Action:** Enforce coverage rules in the cloud by modifying the GitHub Actions CI pipeline to fail if coverage drops below 90%.
+
+## [2026-08-26] - Week 2, Wednesday: The Hardware Abstraction Headers
+
+### 🎯 Objective
+- [x] Write the MCAL/HAL header files (`adc.h`, `pwm.h`, `encoder.h`, `can.h`).
+- [x] Define function prototypes without implementing the hardware-specific C files.
+
+### 🧠 Decisions & Discoveries
+- **Decision:** Utilized Contract-Driven Development. 
+- **Why:** By defining the hardware interfaces as standard C headers first, the core Application logic (PI controller, state machine) can be written and tested completely independent of the STM32 datasheet. If the physical microcontroller changes, only the underlying `.c` files need to be rewritten; the logic remains untouched.
+- **Decision:** Used `uint16_t` (milliamps) instead of `float` (Amps) for the ADC current reading.
+- **Why:** Fixed-point math avoids the massive overhead of floating-point libraries on bare-metal processors, saving flash memory and execution cycles.
