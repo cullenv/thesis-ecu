@@ -158,3 +158,19 @@
 - **Why:** By defining the hardware interfaces as standard C headers first, the core Application logic (PI controller, state machine) can be written and tested completely independent of the STM32 datasheet. If the physical microcontroller changes, only the underlying `.c` files need to be rewritten; the logic remains untouched.
 - **Decision:** Used `uint16_t` (milliamps) instead of `float` (Amps) for the ADC current reading.
 - **Why:** Fixed-point math avoids the massive overhead of floating-point libraries on bare-metal processors, saving flash memory and execution cycles.
+
+## [2026-08-27] - Week 2, Thursday: Generating Hardware Mocks 30th
+
+### 📚 Core Concepts Learned
+- **Concept: What is a Mock? (The Stunt Double):** A mock is a fake C function used to test application logic without physical hardware. If my application tries to write to the physical STM32 chip, my PC will crash. The mock acts as a stunt double to safely absorb that function call.
+- **Mental Model: The "Spy with a Notebook":** 
+  - **Outputs (PWM):** The mock acts as a spy recording actions. When my code calls `PWM_SetDutyCycle(50)`, the Spy writes down: *"The app asked for 50% power."* My tests can then check the Spy's notebook to verify my math is right.
+  - **Inputs (ADC):** The Spy can also inject fake data. I can tell the Spy: *"When the app asks for motor current, hand them the number 6000 (6 Amps)."* This lets me safely test catastrophic faults like an engine fire.
+
+### 🛠️ Syntax & Compiler Traps
+- **Trap 1: The Semicolon Chain-Breaker:** In C++, `mock().actualCall().withParameter()` is a single continuous command called *method chaining*. Putting a semicolon after the first parenthesis breaks the chain and causes a compiler error.
+- **Trap 2: The Double Pointer Accident:** When a function argument is already a pointer (e.g., `uint16_t *value`), passing `&value` to the mock creates a double pointer (`**`). The mock just needs the original address to know where to write the fake data.
+
+### 🍞 Breadcrumb for Friday
+- **Status:** Hardware mocks are successfully compiling into the PC test framework.
+- **Next Action:** Architecture Review. Map the requirements to the tests to ensure we haven't missed any physical inputs/outputs.
