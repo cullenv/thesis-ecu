@@ -174,3 +174,17 @@
 ### 🍞 Breadcrumb for Friday
 - **Status:** Hardware mocks are successfully compiling into the PC test framework.
 - **Next Action:** Architecture Review. Map the requirements to the tests to ensure we haven't missed any physical inputs/outputs.
+
+## [2026-08-28] - Week 2, Friday: Architecture Review & Traceability
+
+### 📚 Core Concepts Learned
+- **Concept: The Traceability Matrix (The Golden Thread):** A mandatory matrix in safety-critical industries that maps Requirement IDs directly to Test Names. It proves that no requirement is forgotten, and ensures there is no "dead code" (code without a requirement).
+- **Concept: The "Missing Wire" Check:** Reviewing requirements against the HAL contracts to ensure the software has the physical means (inputs/outputs) to accomplish the task.
+
+### 🧠 Mental Models & Architectural Rules
+- **Mental Model: The "Dumb Hardware" Principle:** The Hardware Abstraction Layer (HAL) must be completely ignorant of Application logic. A hardware function should never be named `LED_SetOvercurrent()`. It should be named `LED_SetRed()`. The *Application* decides when and why it turns on; the *Hardware* just flips the pin. 
+- **Rule: Boundary of Math vs. Hardware:** The HAL returns raw data (e.g., encoder counts, raw ADC values). It does not do physics calculations. The Application layer handles multiplying those counts by gear ratios to get RPM. This keeps the hardware driver reusable if the physical motor changes.
+
+### 🍞 Breadcrumb for Saturday
+- **Status:** Architecture is verified, Traceability Matrix is seeded.
+- **Next Action:** Build the Scheduler Skeleton (`scheduler.c`). We need to write the cooperative loops (1ms, 10ms, 100ms) and prove the timing works using CppUTest.
