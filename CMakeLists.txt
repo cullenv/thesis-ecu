@@ -8,12 +8,22 @@ add_executable(ecu_firmware app/main.c)
 # 3. Test only executable creation
 add_executable(run_tests 
     tests/test_dummy.cpp
+<<<<<<< HEAD
     tests/mocks/MockPWM.cpp
     tests/mocks/MockADC.cpp
     app/scheduler.c
 )
 
+=======
+    tests/MockPWM.cpp
+    tests/MockADC.cpp)
+    app/scheduler.c
+)
+>>>>>>> 57ad6ce9d7b80f2589da299358bfd57d1e3f2655
 # Add coverage tracking during compilation
+
+target_include_directories(run_tests PRIVATE ${CMAKE_SOURCE_DIR})
+
 target_compile_options(run_tests PRIVATE --coverage)
 
 # Add coverage library during linking
