@@ -6,9 +6,14 @@ project(ThesisECU C CXX) # C and CXX which is c++ which is the tests.
 add_executable(ecu_firmware app/main.c)
 
 # 3. Test only executable creation
-add_executable(run_tests tests/test_dummy.cpp)
-
+add_executable(run_tests 
+    tests/test_dummy.cpp
+    tests/MockPWM.cpp
+    tests/MockADC.cpp)
 # Add coverage tracking during compilation
+
+target_include_directories(run_tests PRIVATE ${CMAKE_SOURCE_DIR})
+
 target_compile_options(run_tests PRIVATE --coverage)
 
 # Add coverage library during linking
