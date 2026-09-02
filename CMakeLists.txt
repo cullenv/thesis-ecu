@@ -11,6 +11,7 @@ add_executable(run_tests
     tests/mocks/MockPWM.cpp
     tests/mocks/MockADC.cpp
     app/scheduler.c
+    tests/test_scheduler.cpp
 )
 
 # Add coverage tracking during compilation
