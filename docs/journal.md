@@ -188,3 +188,49 @@
 ### 🍞 Breadcrumb for Saturday
 - **Status:** Architecture is verified, Traceability Matrix is seeded.
 - **Next Action:** Build the Scheduler Skeleton (`scheduler.c`). We need to write the cooperative loops (1ms, 10ms, 100ms) and prove the timing works using CppUTest.
+
+## [2026-08-29] - Week 2, Saturday: The Scheduler Skeleton & Virtual Time
+
+### 📚 Core Concepts Learned
+- **Concept: Virtual Time (The Time Machine):** Time in a bare-metal embedded system is just a variable that counts hardware interrupts. By calling `Scheduler_UpdateTick()` inside a C++ `for` loop, I can simulate seconds of time passing in milliseconds on my PC, allowing me to instantly test timing logic.
+- **Concept: Data Hiding with `static`:** C does not have `private` classes. Using the `static` keyword on global variables inside a `.c` file makes them invisible to other files. This prevents other developers from accidentally overwriting my `counter_10ms` variable.
+- **Concept: The "Clear on Read" Pattern:** When the main loop checks if a task is due, the scheduler returns `true` but immediately sets the flag back to `false` before returning. This guarantees a task runs exactly once per time slot.
+
+### 🛠️ Syntax & Compiler Traps
+- **Trap 1: `#include` Quotes:** Using `#include app/scheduler.h` without quotes causes a compiler error. Local project files require quotes (`"..."`), while standard library files use angle brackets (`<...>`).
+- **Trap 2: `void` vs `bool` Return Types:** I cannot define a function as `void` if it returns `true` or `false`. The compiler enforces strict return types to prevent logical errors.
+
+### 🍞 Breadcrumb for Sunday
+- **Status:** The time-triggered scheduler is fully implemented and tested.
+- **Next Action:** Build the main application architecture. We need to write the PI Controller logic that will actually live inside that 10ms time slot!
+
+## Week 2: Hardware Abstraction & Scheduling
+
+**Core Concepts Learned:**
+*   **Contract-Driven Development:** The application layer defines what it needs from the hardware (the HAL interface), but dictates nothing about how the silicon actually implements it. 
+*   **Virtual Time:** The scheduler runs on a hardware timer interrupt, but tasks execute based on a "Clear on Read" software flag. This decouples task execution from the raw ISR, keeping interrupts short.
+*   **State Encapsulation in C:** True object-oriented design in C is achieved by passing pointers to state structs (`Controller_t *ctx`) into standard functions, preventing stack bloat and preserving state between task cycles.
+
+**Mental Models:**
+*   **The Spy with a Notebook (Mocks):** CppUMock acts as a spy. When our application calls `PWM_SetDutyCycle()`, it isn't talking to real hardware. It's talking to the spy, who writes down "The application asked for 50% duty cycle" in a notebook. Our test then reads the notebook to verify the application's behavior.
+*   **The Ledger vs. The Photocopy (Pointers):** Passing a struct by value is like handing a function a photocopy of a ledger; they can write in it, but the original doesn't change. Passing by pointer hands them the actual ledger book.
+
+**Syntax & Compiler Traps:**
+*   **Static Encapsulation:** Forgetting the `static` keyword on file-scope variables exposes them to the linker, breaking encapsulation and risking cross-file contamination.
+
+## Week 3: Core Controller Logic & Safety Architecture
+
+**Core Concepts Learned:**
+*   **Integral Anti-Windup (Controller-Level Protection):** If a physical actuator jams, the controller’s error remains high. Without protection, the integral term accumulates to infinity. When the jam clears, the motor violently surges to "unwind" that massive value. We solve this by enforcing hard mathematical clamps (upper and lower bounds) on the integral state variable.
+*   **Time-Decoupled Math ($\Delta t$):** Standard integral math adds the error every time the function is called, coupling the control physics to the software scheduler's frequency. By multiplying the integral addition by Delta Time (Ki * error * dt), the math becomes time-aware. The controller behaves identically whether the scheduler runs it every 1ms or 10ms.
+*   **Floating-Point vs. Fixed-Point Math:** We use 32-bit `float` variables because our STM32G4 has a hardware Floating Point Unit (FPU) that executes this math in a single clock cycle. On cheaper chips (like STM32F0), the compiler injects hidden software libraries to emulate floating-point math, taking hundreds of clock cycles and causing us to miss real-time deadlines.
+*   **Stack Overflow Prevention:** Copying large structs onto the stack inside high-frequency cyclic tasks is a massive safety hazard. In ASIL-D software, stack overflows cause hard faults. Operating strictly via pointers prevents stack bloat.
+
+**Mental Models:**
+*   **The Ledger vs. The Photocopy (Pointer Semantics):** In C, passing a struct by value to a function creates a temporary photocopy on the stack. Updates to the state (like the integral sum) vanish the moment the function returns. By passing a pointer (`PI_Controller_t *pid`), we hand the function the physical ledger book. This allows the state to survive across scheduler cycles.
+*   **The Noise Amplifier (Danger of the D-Term):** The derivative term calculates the rate of change of the error (slope). Real-world automotive sensors are noisy. A 1ms noise spike creates a near-infinite rate of change, which the derivative term amplifies into violent PWM spikes that can shred a gearbox. Therefore, standard motor speed loops set $K_d = 0$ and rely entirely on PI.
+
+**Syntax & Compiler Traps:**
+*   **C vs. C++ Structs:** Unlike C++, bare-metal C does not allow default values to be assigned inside a struct definition (e.g., `float kp = 0;` is illegal). A C struct is purely a memory blueprint. It must be explicitly zeroed out by an initialization function.
+*   **File Separation & Header Guards:** We enforce a strict separation between the "Menu" (`pid.h` - definitions and prototypes) and the "Kitchen" (`pid.c` - actual logic). We use Header Guards (`#ifndef PID_H`) to stop the preprocessor from defining the same struct twice if multiple files include the header, preventing a fatal redefinition error.
+*   **Strict Integer Widths:** MISRA-C bans the use of standard `int` because its bit-width changes depending on the compiler and architecture. In automotive firmware, we use exact-width types (like `int32_t` or `uint16_t` from `<stdint.h>`) so memory footprint is deterministic across all hardware.
