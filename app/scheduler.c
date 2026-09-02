@@ -1,4 +1,4 @@
-#include app/scheduler.h
+#include "app/scheduler.h"
 
 static uint8_t counter_10ms = 0;
 static uint8_t counter_100ms = 0;
@@ -29,14 +29,15 @@ void Scheduler_UpdateTick(void) {
     }
 }
 
-void Scheduler_Is10msTaskDue(void) {
+bool Scheduler_Is10msTaskDue(void) {
     if (flag_10ms) {
         flag_10ms = false;
         return true;
     }
     return false;
+}
 
-void Scheduler_Is100msTaskDue(void) {
+bool Scheduler_Is100msTaskDue(void) {
     if (flag_100ms) {
         flag_100ms = false;
         return true;
