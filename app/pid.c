@@ -10,7 +10,7 @@ void PID_Init(PI_Controller_t *pid, float kp, float ki, float max_integral) {
 float PID_Update(PI_Controller_t *pid, float setpoint, float measured, float dt){
     float error = setpoint - measured;
     float prop = error * pid->kp;
-    pid->integral_sum = pid->integral_sum + (pid->ki * error);
+    pid->integral_sum = pid->integral_sum + (pid->ki * error * dt);
 
     if(pid->integral_sum >= pid->max_integral) {
         pid->integral_sum = pid->max_integral;

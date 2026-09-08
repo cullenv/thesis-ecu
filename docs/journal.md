@@ -234,3 +234,18 @@
 *   **C vs. C++ Structs:** Unlike C++, bare-metal C does not allow default values to be assigned inside a struct definition (e.g., `float kp = 0;` is illegal). A C struct is purely a memory blueprint. It must be explicitly zeroed out by an initialization function.
 *   **File Separation & Header Guards:** We enforce a strict separation between the "Menu" (`pid.h` - definitions and prototypes) and the "Kitchen" (`pid.c` - actual logic). We use Header Guards (`#ifndef PID_H`) to stop the preprocessor from defining the same struct twice if multiple files include the header, preventing a fatal redefinition error.
 *   **Strict Integer Widths:** MISRA-C bans the use of standard `int` because its bit-width changes depending on the compiler and architecture. In automotive firmware, we use exact-width types (like `int32_t` or `uint16_t` from `<stdint.h>`) so memory footprint is deterministic across all hardware.
+
+## Week 3 (Continued): Application Integration & Hardware Protection
+
+**Core Concepts Learned:**
+*   **Rate Limiting (Ramp Generator):** We cannot allow the system to instantly demand infinite acceleration. A Ramp Generator intercepts the driver's target speed and safely steps it up or down over time before passing it to the PI controller.
+*   **Asymmetric Limits & Back-EMF:** We use different limits for acceleration (`max_step_up`) and deceleration (`max_step_down`). Because of the physical mass of a vehicle, decelerating too aggressively turns the motor into a generator. This can create massive reverse voltage spikes (back-EMF) that will blow the capacitors on the motor driver. 
+*   **Overshoot & Chattering:** If a step size pushes the output past the target (e.g., stepping from 95 to 105 when the target is 100), the system will indefinitely bounce back and forth (chatter) trying to fix it. We mathematically clamp the output exactly to the target to prevent this oscillation.
+*   **Saturation Clamping (Timer Wrap-Around):** If a control loop calculates a 200% duty cycle, passing that into a 100% maximum hardware timer register will cause an integer overflow. The register wraps around, and the hardware outputs a dangerously wrong value (like 50% or 0%). We strictly clamp the PI output to `+/- 100.0f` before it ever leaves the control loop.
+*   **Internal Linkage (`static`):** By placing `static` in front of our state structs at the top of `motor_control.c`, we make them completely invisible to the rest of the project. This prevents global variable contamination and guarantees ASIL-D state encapsulation.
+
+**Mental Models:**
+*   **The Vending Machine (Function Calls):** Defining a function uses `{}` (building the machine). Calling a function does *not* use `{}`. You pass your parameters into the parentheses (insert coins), and you catch the return value using an equals sign and a variable (putting a box under the chute): `float soda = VendingMachine(coins);`
+
+**Syntax & Compiler Traps:**
+*   **Undeclared Identifiers:** Naming a parameter `step_down` in the function signature, but trying to assign `max_step_down` inside the function body, causes a fatal compiler error. Parameter names must perfectly match their usage.
