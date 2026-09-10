@@ -249,3 +249,9 @@
 
 **Syntax & Compiler Traps:**
 *   **Undeclared Identifiers:** Naming a parameter `step_down` in the function signature, but trying to assign `max_step_down` inside the function body, causes a fatal compiler error. Parameter names must perfectly match their usage.
+
+## Week 3 (Final): Hardware Abstraction & Mocking
+
+**Core Concepts Learned:**
+*   **The HAL Contract:** The Application Layer must never touch silicon registers directly (like `TIM1->CCR1`). It communicates through a Hardware Abstraction Layer (HAL). The HAL is just a menu of prototypes (`hal_pwm.h`). This keeps the application 100% portable across different microcontrollers.
+*   **CppUMock Expectations:** In our unit tests, we compile the Application against "Mock" functions instead of real hardware. The test sets an expectation (`expectOneCall`), the Application runs, and the Mock records what happened (`actualCall`). If the application output matches the expectation, the test passes. This proves our firmware works before we ever touch a breadboard.

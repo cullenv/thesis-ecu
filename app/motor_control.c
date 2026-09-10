@@ -1,6 +1,7 @@
 #include "motor_control.h"
 #include "pid.h"
 #include "ramp.h"
+#include "hal_pwm.h"
 
 static PI_Controller_t motor_pid;
 static Ramp_t motor_ramp;
@@ -33,4 +34,5 @@ void App_MotorControl_Task(void) {
     }
     
     // 5. Send to hardware... (We will do this next!)
+    PWM_SetDutyCycle(control_effort);    
 }
