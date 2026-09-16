@@ -255,3 +255,12 @@
 **Core Concepts Learned:**
 *   **The HAL Contract:** The Application Layer must never touch silicon registers directly (like `TIM1->CCR1`). It communicates through a Hardware Abstraction Layer (HAL). The HAL is just a menu of prototypes (`hal_pwm.h`). This keeps the application 100% portable across different microcontrollers.
 *   **CppUMock Expectations:** In our unit tests, we compile the Application against "Mock" functions instead of real hardware. The test sets an expectation (`expectOneCall`), the Application runs, and the Mock records what happened (`actualCall`). If the application output matches the expectation, the test passes. This proves our firmware works before we ever touch a breadboard.
+
+## Week 4: The Diagnostic Fault Manager
+
+**Core Concepts Learned:**
+*   **Enumerations (`enum`):** Instead of using "magic numbers" (like `0` for clear and `1` for active), we use `enum` to define named states (`FAULT_CLEAR`, `FAULT_ACTIVE`). This makes the C code readable, prevents invalid numbers from being passed to functions, and clearly communicates intent.
+*   **Separation of Concerns:** Low-level sensor drivers (like an encoder reader) must never directly command hardware actuators (like a motor PWM) to shut down. They simply report their status to a central Fault Manager. This prevents "Spaghetti Code" and keeps drivers modular and reusable.
+*   **Fault Debouncing (Tick Counters):** Sensors glitch. To prevent a 1-millisecond noise spike from shutting down a car, faults must be "debounced" (verified over time). We achieve this by counting scheduler executions (ticks) rather than using `delay()`. 
+*   **Blocking vs. Non-Blocking Code:** A `delay()` function halts the CPU. In a cooperative scheduler, if one task blocks, all other tasks miss their deadlines. Embedded cyclic tasks must strictly be non-blocking: they evaluate state, update variables, and immediately return.
+*   **Non-Volatile Memory (NVM):** RAM is volatile and wipes when the vehicle turns off. Active Diagnostic Trouble Codes (DTCs) must eventually be written to NVM (like EEPROM or Flash) so a mechanic's OBD-II scanner can retrieve the history days later.
