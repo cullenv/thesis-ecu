@@ -2,3 +2,5 @@
 #define APP_HAL_PWM_H
 
 void PWM_SetDutyCycle(float duty_cycle_percent);
+
+#endif // APP_HAL_PWM_H
