@@ -2,6 +2,7 @@
 #include "pid.h"
 #include "ramp.h"
 #include "hal_pwm.h"
+#include "diagnostics.h"
 
 static PI_Controller_t motor_pid;
 static Ramp_t motor_ramp;
@@ -33,6 +34,10 @@ void App_MotorControl_Task(void) {
         control_effort = -100.0f;
     }
     
-    // 5. Send to hardware... (We will do this next!)
+    if (Diagnostics_GetStatus(DTC_ENCODER_LOSS) == FAULT_ACTIVE) {
+        control_effort = 0.0f; // Disable any output if encoder loss fault is active
+    }
+
+    // 5. Send to hardware
     PWM_SetDutyCycle(control_effort);    
 }
