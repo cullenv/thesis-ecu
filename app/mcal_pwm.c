@@ -6,6 +6,14 @@
 
 void PWM_HardwareInit(void) {
 
+    RCC->APB2ENR |= (1U << 11); // clock to timer 1
+
+    TIM1->PSC = 0; 
+    TIM1->ARR = 16999U; //10khz using 
+
+    TIM1->CR1 |= (1U << 0); // timer 1 coutner
+
+
 }
 
 void PWM_SetDutyCycle(float duty_cycle_percent){
