@@ -264,3 +264,28 @@
 *   **Fault Debouncing (Tick Counters):** Sensors glitch. To prevent a 1-millisecond noise spike from shutting down a car, faults must be "debounced" (verified over time). We achieve this by counting scheduler executions (ticks) rather than using `delay()`. 
 *   **Blocking vs. Non-Blocking Code:** A `delay()` function halts the CPU. In a cooperative scheduler, if one task blocks, all other tasks miss their deadlines. Embedded cyclic tasks must strictly be non-blocking: they evaluate state, update variables, and immediately return.
 *   **Non-Volatile Memory (NVM):** RAM is volatile and wipes when the vehicle turns off. Active Diagnostic Trouble Codes (DTCs) must eventually be written to NVM (like EEPROM or Flash) so a mechanic's OBD-II scanner can retrieve the history days later.
+
+## Week 4 (Final): Memory Safety & Diagnostic Scaling
+
+**Core Concepts Learned:**
+*   **Safety Enums (Hamming Distance):** Standard `bool` types are dangerous in ASIL-D environments because a single EMI bit-flip (e.g., from cosmic radiation) can change `false` to `true`. We use Enums with high Hamming distance (like `0x55` and `0xAA`) so that multiple bits must flip simultaneously to accidentally change a safety state.
+*   **The `MAX_DIAGNOSTICS` Trick:** By placing a `MAX` element at the very end of an `enum` list, the C compiler automatically assigns it the total count of the items. We use this to dynamically size arrays (`fault_table[MAX_DIAGNOSTICS]`). If a developer adds a new fault next year, the array automatically resizes, preventing buffer overflows.
+*   **Out-of-Bounds Memory Protection:** C does not naturally protect arrays. If a function requests index 99 of a 3-item array, C will blindly read adjacent memory, which could cause a fatal safety failure. We explicitly check `if (id >= MAX_DIAGNOSTICS)` before reading arrays to ensure ASIL-D memory safety.
+*   **The Safety Override:** The Application Layer polls the Fault Manager immediately before actuating hardware. If a fault is active, it overrides the control math (setting PWM to `0.0f`). This guarantees the system fails safely regardless of what the PI controller requests.
+
+## Week 5: The communication stack
+
+Consists of 3 layers:
+
+COM Stack -> translates raw network bytes into human readable figures
+HAL -> Defines what a generic can message should look like (should not matter what micro controller we use)
+MCAL -> the stm32 math that changes the bits on the chip
+
+We are going to do the hal first
+
+CAN uses two wires twisted tightly together to prevent emi noise (differential signaling)
+
+To send a 1 (Recessive), both wires sit at 2.5V.
+
+To send a 0 (Dominant), CAN High goes up to 3.5V, and CAN Low drops down to 1.5V.
+The receiver doesn't care about the absolute voltage; it only looks at the difference between the two wires (High - Low).
