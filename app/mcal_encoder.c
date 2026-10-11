@@ -1,7 +1,6 @@
 #include "hal_encoder.h"
 #include <stdint.h>
-#include "stm32g474xx.h"
-
+#include "../Inc/main.h"
 
 void Encoder_HardwareInit(void){
 

@@ -1,7 +1,7 @@
 #include "com_manager.h"
 #include <stdint.h>
 
-extern void HAL_CAN_Transmit(CAN_Frame_t *frame);
+extern void HAL_CAN_Transmit(CAN_Message_t *frame);
 
 void COM_SendMotorSpeed(float speed_rpm){
 
@@ -14,7 +14,7 @@ void COM_SendMotorSpeed(float speed_rpm){
 
     converter.f_val = speed_rpm;
 
-    CAN_Frame_t CAN;
+    CAN_Message_t CAN;
     CAN.id = 0x105;
     CAN.dlc = 4;
 

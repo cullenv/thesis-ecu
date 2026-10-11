@@ -1,4 +1,4 @@
-#include "app/scheduler.h"
+#include "scheduler.h"
 
 static uint8_t counter_10ms = 0;
 static uint8_t counter_100ms = 0;

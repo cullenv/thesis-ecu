@@ -1,7 +1,9 @@
+#include <stdint.h>
+
 #ifndef HAL_CAN_H
 #define HAL_CAN_H
 
-#include <stdint.h>
+
 #include <stdbool.h>
 
 // A generic CAN message structure that I found online.

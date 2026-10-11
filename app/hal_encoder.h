@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #ifndef HAL_ENCODER_H
 #define HAL_ENCODER_H
 

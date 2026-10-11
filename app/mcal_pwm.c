@@ -1,6 +1,6 @@
 #include "hal_pwm.h"
 #include <stdint.h>
-#include "stm32g474xx.h"
+#include "../Inc/main.h"
 
 #define TIMER_MAX_TICKS 8000U
 

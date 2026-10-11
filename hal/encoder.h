@@ -1,7 +1,10 @@
+#include <stdint.h>
+
 #ifndef HAL_ENCODER_H
 #define HAL_ENCODER_H
 
-#include <stdint.h>
+
+
 
 void Encoder_Init(void);
 

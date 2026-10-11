@@ -1,9 +1,11 @@
 #include "fault_manager.h"
 
-void Fault_Init(FaultMonitor_t *monitor, uint32_t dtc){
+#include <stdbool.h>
+
+void Fault_Init(FaultMonitor_t *monitor, uint32_t dtc, uint16_t debounce_threshold) {
     monitor->dtc = dtc;            //store the fault code
     monitor->status = FAULT_CLEAR; // clean slate
-    montior->error_counter = 0;   // reset error counter
+    monitor->error_counter = 0;   // reset error counter
 }
 
 void Fault_SetStatus(FaultMonitor_t *monitor, FaultStatus_t new_status){

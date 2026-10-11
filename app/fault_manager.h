@@ -1,6 +1,10 @@
+#include <stdint.h>
+#include <stdbool.h>
+
+
 #ifndef APP_FAULT_MANAGER_H
 #define APP_FAULT_MANAGER_H
-#include <stdint.h>
+
 
 typedef enum {
     FAULT_CLEAR = 0,
