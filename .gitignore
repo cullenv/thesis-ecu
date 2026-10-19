@@ -5,3 +5,5 @@ build/
 *.bin
 .vscode/
 build/
+thesis-final-bench1/Debug/
+thesis-final-bench1/Release/

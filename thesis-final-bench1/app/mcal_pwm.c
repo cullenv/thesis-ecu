@@ -1,0 +1,29 @@
+#include "hal_pwm.h"
+#include <stdint.h>
+#include "../Inc/main.h"
+
+#define TIMER_MAX_TICKS 8000U
+
+void PWM_HardwareInit(void) {
+
+    RCC->APB2ENR |= (1U << 11); // clock to timer 1
+
+    TIM1->PSC = 0; 
+    TIM1->ARR = 16999U; //10khz using 
+
+    TIM1->CR1 |= (1U << 0); // timer 1 coutner
+
+
+}
+
+void PWM_SetDutyCycle(float duty_cycle_percent){
+
+    if (duty_cycle_percent > 100.0f){
+        duty_cycle_percent = 100.0f;
+    } else if ( duty_cycle_percent < 0.0f ) {
+        duty_cycle_percent = 0.0f;
+    }
+
+    TIM1->CCR1 = (uint16_t)((duty_cycle_percent/100.0f) * TIMER_MAX_TICKS); //dmmy_hardware_register will turn into the actual ardware register going straight to our mcu
+    
+}

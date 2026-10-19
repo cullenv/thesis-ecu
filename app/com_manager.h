@@ -5,6 +5,6 @@
 
 void COM_SendMotorSpeed(float speed_rpm);
 
-void COM_Inti(void);
+void COM_Int(void);
 
 #endif
