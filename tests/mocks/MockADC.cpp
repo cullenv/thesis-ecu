@@ -1,7 +1,7 @@
 #include "CppUTestExt/MockSupport.h"
 
 extern "C" {
-    #include "hal/adc.h"
+    #include "adc.h"
 }
 
 void ADC_Init(void) {

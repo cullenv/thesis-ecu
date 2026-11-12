@@ -11,13 +11,13 @@ TEST_GROUP(Fault_Manager) {
 
 TEST(Fault_Manager, Initialization_StoresDTC_And_ClearsStatus) {
     FaultMonitor_t my_fault;
-    my_fault.status = FAULT_ACTIVE; // Garbage data
+    my_fault.status = STATUS_ACTIVE; // Garbage data
 
     // Initialize with a fake DTC: 0x9101 (Encoder Loss)
     Fault_Init(&my_fault, 0x9101);
 
     LONGS_EQUAL(0x9101, my_fault.dtc);
-    LONGS_EQUAL(FAULT_CLEAR, my_fault.status);
+    LONGS_EQUAL(STATUS_INACTIVE, my_fault.status);
 }
 
 TEST(Fault_Manager, SetStatus_UpdatesFaultState) {
@@ -25,6 +25,6 @@ TEST(Fault_Manager, SetStatus_UpdatesFaultState) {
     Fault_Init(&my_fault, 0x9101);
 
     // Trip the fault!
-    Fault_SetStatus(&my_fault, FAULT_ACTIVE);
-    LONGS_EQUAL(FAULT_ACTIVE, my_fault.status);
+    Fault_SetStatus(&my_fault, STATUS_ACTIVE);
+    LONGS_EQUAL(STATUS_ACTIVE, my_fault.status);
 }

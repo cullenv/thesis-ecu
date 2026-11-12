@@ -4,7 +4,7 @@
 
 void Fault_Init(FaultMonitor_t *monitor, uint32_t dtc, uint16_t debounce_threshold) {
     monitor->dtc = dtc;            //store the fault code
-    monitor->status = FAULT_CLEAR; // clean slate
+    monitor->status = STATUS_INACTIVE; // clean slate
     monitor->error_counter = 0;   // reset error counter
 }
 
@@ -16,10 +16,10 @@ void Fault_Update(FaultMonitor_t *monitor, bool is_error_present){
     if(is_error_present){
         monitor->error_counter++; //increment error counter
         if(monitor->error_counter >= monitor->debounce_threshold){
-            Fault_SetStatus(monitor, FAULT_ACTIVE); //set fault active
+            Fault_SetStatus(monitor, STATUS_INACTIVE); //set fault active
         }
     } else {
         monitor->error_counter = 0; //reset error counter
-        Fault_SetStatus(monitor, FAULT_CLEAR); //clear fault
+        Fault_SetStatus(monitor, STATUS_INACTIVE); //clear fault
     }
 }

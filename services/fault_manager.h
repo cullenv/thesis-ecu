@@ -7,8 +7,8 @@
 
 
 typedef enum {
-    FAULT_CLEAR = 0,
-    FAULT_ACTIVE = 1
+    STATUS_INACTIVE = 0,
+    STATUS_ACTIVE = 1
 } FaultStatus_t;
 
 typedef struct {

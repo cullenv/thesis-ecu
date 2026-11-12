@@ -1,7 +1,7 @@
 #include "CppUTest/TestHarness.h"
 
 extern "C" {
-    #include "app/scheduler.h"
+    #include "scheduler.h"
 }
 
 TEST_GROUP(Scheduler) {
